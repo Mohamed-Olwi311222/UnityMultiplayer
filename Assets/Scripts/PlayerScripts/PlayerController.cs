@@ -21,8 +21,11 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (!IsOwner) {return;}
-        mainCamera = Camera.main;
+        if (!IsOwner)
+        {
+            gameObject.GetComponent<PlayerInput>().enabled = false;
+            return;
+        }
     }
     public override void OnNetworkDespawn()
     {
@@ -43,16 +46,16 @@ public class PlayerController : NetworkBehaviour
 
     public void OnLook(InputAction.CallbackContext context)
     {
-        mouseWorldPos = mainCamera.ScreenToWorldPoint(context.ReadValue<Vector2>());
+        if (!IsOwner) { return; }
     }
     private void LookAtMouse()
     {
-        Vector2 direction = -(mouseWorldPos - (Vector2)tankHead.position).normalized; // Direction to mouse
-        tankHead.right = sensitivity * Time.deltaTime * direction;
+
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (!IsOwner) { return; }
         moveInput = context.ReadValue<Vector2>();
     }
     private void Move()
@@ -74,6 +77,7 @@ public class PlayerController : NetworkBehaviour
     }
     public void OnSprint(InputAction.CallbackContext context)
     {
+        if (!IsOwner) { return; }
         if (context.performed) {isSprinting = true;}
         else {isSprinting = false;}
     }
